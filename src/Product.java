@@ -1,4 +1,6 @@
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
     private final String name;
     private final int price;
     private int amount;
@@ -16,12 +18,6 @@ public class Product {
     }
 
     public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public Product(String name, int price, int amount) {
-        this.name = name;
-        this.price = price;
         this.amount = amount;
     }
 

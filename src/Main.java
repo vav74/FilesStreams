@@ -1,7 +1,6 @@
 import java.util.Scanner;
 import java.io.*;
 
-//После ввода каждой покупки пользователем вам следует сохранять пользовательскую корзину в файл basket.txt.
 //При старте программа должна искать этот файл в корне проекта и если он находится, восстанавливать корзину из него;
 //если файл не найдет, то стоит начать с пустой корзины.
 public class Main {
@@ -15,10 +14,10 @@ public class Main {
         products[4] = new Product("Рыба", 400);
         products[5] = new Product("Печенье", 200);
         products[6] = new Product("Пиво", 150);
-        File file = new File("basket.txt");
+        File file = new File("basket.bin");
 
         if (file.exists()) {
-            basket = Basket.loadFromTxtFile(file);
+            basket = Basket.loadFromBinFile(file);
         } else {
             basket = new Basket(products);
         }
@@ -36,7 +35,7 @@ public class Main {
             }
             String[] parts = input.split(" ");
             basket.addToCart(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
-            basket.saveTxt(file);
+            basket.saveBin(file);
         }
     }
 }

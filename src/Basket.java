@@ -1,10 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
-//После ввода каждой покупки пользователем вам следует сохранять пользовательскую корзину в файл basket.txt.
-//При старте программа должна искать этот файл в корне проекта и если он находится, восстанавливать корзину из него;
-//если файл не найдет, то стоит начать с пустой корзины.
 public class Basket {
     protected Product[] cart;
 
@@ -31,34 +26,25 @@ public class Basket {
         System.out.println("Итого " + sumProducts + " руб");
     }
 
-    //статический(!) метод восстановления объекта корзины из текстового файла, в который ранее была она сохранена;
-    public static Basket loadFromTxtFile(File file) {
-        List<Product> cartFromSavedFile = new ArrayList<>();
-        String[] parts;
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String s;
-            while ((s = br.readLine()) != null) {
-                parts = s.trim().split(" ");
-                cartFromSavedFile.add(new Product(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2])));
-            }
+    public void saveBin(File file) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            out.writeObject(cart);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-        return new Basket(cartFromSavedFile.toArray(Product[]::new));
     }
 
-    //Метод сохранения корзины в текстовый файл; использовать встроенные сериализаторы нельзя;
-//Если все данные у вас хранятся в массивах, то просто сохраните по массиву на каждой строке.
-//Например, если бы это был лонговый массив в поле нашей корзины, то можно было бы сделать так:
-    public void saveTxt(File file) {
-        try (PrintWriter out = new PrintWriter(file)) {
-            for (Product product : cart) {
-                out.println(product.getName() + " " + product.getPrice() + " " + product.getAmount());
+    public static Basket loadFromBinFile(File file) {
+        Product[] cartFromBin = new Product[0];
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            try {
+                cartFromBin = (Product[]) in.readObject();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
+        return new Basket(cartFromBin);
     }
-//А при чтении вы сможете строку файла разбить через split(" ")и пройдясь циклом каждое
-//значение превратить в long
 }
