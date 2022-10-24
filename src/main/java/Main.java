@@ -16,6 +16,7 @@ public class Main {
         products[5] = new Product("Печенье", 200);
         products[6] = new Product("Пиво", 150);
         File file = new File("basket.txt");
+        File logFile = new File("log.csv");
 
         if (file.exists()) {
             basket = Basket.loadFromTxtFile(file);
@@ -32,6 +33,11 @@ public class Main {
             String input = scanner.nextLine();
             if ("end".equals(input)) {
                 basket.printCart();
+                try {
+                    basket.clientLog.exportAsCSV(logFile);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             }
             String[] parts = input.split(" ");

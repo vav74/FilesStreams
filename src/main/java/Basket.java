@@ -2,20 +2,20 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//После ввода каждой покупки пользователем вам следует сохранять пользовательскую корзину в файл basket.txt.
-//При старте программа должна искать этот файл в корне проекта и если он находится, восстанавливать корзину из него;
-//если файл не найдет, то стоит начать с пустой корзины.
 public class Basket {
     protected Product[] cart;
+    protected ClientLog clientLog;
 
     //Конструктор, принимающий массив цен и названий продуктов;
     public Basket(Product[] products) {
         this.cart = products;
+        this.clientLog = new ClientLog();
     }
 
     //Метод добавления amount штук продукта номер productNum в корзину;
     public void addToCart(int productNum, int amount) {
         this.cart[productNum - 1].setAmount(this.cart[productNum - 1].getAmount() + amount);
+        this.clientLog.log(productNum, amount);
     }
 
     //метод вывода на экран покупательской корзины
@@ -47,7 +47,7 @@ public class Basket {
         return new Basket(cartFromSavedFile.toArray(Product[]::new));
     }
 
-    //Метод сохранения корзины в текстовый файл; использовать встроенные сериализаторы нельзя;
+//Метод сохранения корзины в текстовый файл; использовать встроенные сериализаторы нельзя;
 //Если все данные у вас хранятся в массивах, то просто сохраните по массиву на каждой строке.
 //Например, если бы это был лонговый массив в поле нашей корзины, то можно было бы сделать так:
     public void saveTxt(File file) {
@@ -62,3 +62,9 @@ public class Basket {
 //А при чтении вы сможете строку файла разбить через split(" ")и пройдясь циклом каждое
 //значение превратить в long
 }
+
+/*
+  Также вместо вызова метода saveTxt в методе main сериализуйте корзину в json-формате в файл basket.json.
+  Аналогично при старте программы загружайте корзину десериализацией из json-а из файла basket.json,
+  а не из обычной текстовой сериализации как было до того.
+  При этом логику сериализации в методах в классе корзины трогать не нужно.*/
