@@ -5,7 +5,7 @@ import java.io.*;
 //При старте программа должна искать этот файл в корне проекта и если он находится, восстанавливать корзину из него;
 //если файл не найдет, то стоит начать с пустой корзины.
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Basket basket;
         Product[] products = new Product[7];
         products[0] = new Product("Хлеб", 50);
@@ -15,11 +15,11 @@ public class Main {
         products[4] = new Product("Рыба", 400);
         products[5] = new Product("Печенье", 200);
         products[6] = new Product("Пиво", 150);
-        File file = new File("basket.txt");
+        File file = new File("basket.json");
         File logFile = new File("log.csv");
 
         if (file.exists()) {
-            basket = Basket.loadFromTxtFile(file);
+            basket = Basket.loadFromJsonFile(file);
         } else {
             basket = new Basket(products);
         }
@@ -42,7 +42,7 @@ public class Main {
             }
             String[] parts = input.split(" ");
             basket.addToCart(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
-            basket.saveTxt(file);
+            basket.saveJson(file);
         }
     }
 }

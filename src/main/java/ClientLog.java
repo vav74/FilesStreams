@@ -25,6 +25,10 @@ public class ClientLog {
                 CSVWriter.NO_QUOTE_CHARACTER,
                 CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                 CSVWriter.RFC4180_LINE_END)) {
+//Add a title bar to CSV-log file
+            if (txtFile.length() == 0) {
+                csvWriter.writeNext("productNum,amount".split(","));
+            }
             for (String s : logList) {
                 csvWriter.writeNext(s.split(","));
             }

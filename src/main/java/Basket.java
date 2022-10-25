@@ -1,6 +1,7 @@
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Basket {
     protected Product[] cart;
@@ -31,40 +32,20 @@ public class Basket {
         System.out.println("Итого " + sumProducts + " руб");
     }
 
-    //статический(!) метод восстановления объекта корзины из текстового файла, в который ранее была она сохранена;
-    public static Basket loadFromTxtFile(File file) {
-        List<Product> cartFromSavedFile = new ArrayList<>();
-        String[] parts;
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String s;
-            while ((s = br.readLine()) != null) {
-                parts = s.trim().split(" ");
-                cartFromSavedFile.add(new Product(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2])));
-            }
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
-        return new Basket(cartFromSavedFile.toArray(Product[]::new));
+    /*
+      Также вместо вызова метода saveTxt в методе main сериализуйте корзину в json-формате в файл basket.json.
+      Аналогично при старте программы загружайте корзину десериализацией из json-а из файла basket.json,
+      а не из обычной текстовой сериализации как было до того.
+      При этом логику сериализации в методах в классе корзины трогать не нужно.*/
+    public void saveJson(File file) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(file, cart);
     }
 
-//Метод сохранения корзины в текстовый файл; использовать встроенные сериализаторы нельзя;
-//Если все данные у вас хранятся в массивах, то просто сохраните по массиву на каждой строке.
-//Например, если бы это был лонговый массив в поле нашей корзины, то можно было бы сделать так:
-    public void saveTxt(File file) {
-        try (PrintWriter out = new PrintWriter(file)) {
-            for (Product product : cart) {
-                out.println(product.getName() + " " + product.getPrice() + " " + product.getAmount());
-            }
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+    public static Basket loadFromJsonFile(File file) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Product[] cartFromJson = mapper.readValue(file, new TypeReference<>() {
+        });
+        return new Basket(cartFromJson);
     }
-//А при чтении вы сможете строку файла разбить через split(" ")и пройдясь циклом каждое
-//значение превратить в long
 }
-
-/*
-  Также вместо вызова метода saveTxt в методе main сериализуйте корзину в json-формате в файл basket.json.
-  Аналогично при старте программы загружайте корзину десериализацией из json-а из файла basket.json,
-  а не из обычной текстовой сериализации как было до того.
-  При этом логику сериализации в методах в классе корзины трогать не нужно.*/

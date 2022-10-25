@@ -1,6 +1,6 @@
 public class Product {
-    private final String name;
-    private final int price;
+    private String name;
+    private int price;
     private int amount;
 
     public String getName() {
@@ -19,10 +19,8 @@ public class Product {
         this.amount = amount;
     }
 
-    public Product(String name, int price, int amount) {
-        this.name = name;
-        this.price = price;
-        this.amount = amount;
+    public Product() {
+        super();
     }
 
     public Product(String name, int price) {
