@@ -2,6 +2,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Basket {
     protected Product[] cart;
@@ -47,5 +49,34 @@ public class Basket {
         Product[] cartFromJson = mapper.readValue(file, new TypeReference<>() {
         });
         return new Basket(cartFromJson);
+    }
+
+    //Метод сохранения корзины в текстовый файл; использовать встроенные сериализаторы нельзя;
+//Если все данные у вас хранятся в массивах, то просто сохраните по массиву на каждой строке.
+//Например, если бы это был лонговый массив в поле нашей корзины, то можно было бы сделать так:
+    public void saveTxt(File file) {
+        try (PrintWriter out = new PrintWriter(file)) {
+            for (Product product : cart) {
+                out.println(product.getName() + " " + product.getPrice() + " " + product.getAmount());
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    //статический(!) метод восстановления объекта корзины из текстового файла, в который ранее была она сохранена;
+    public static Basket loadFromTxtFile(File file) {
+        List<Product> cartFromSavedFile = new ArrayList<>();
+        String[] parts;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String s;
+            while ((s = br.readLine()) != null) {
+                parts = s.trim().split(" ");
+                cartFromSavedFile.add(new Product(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2])));
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return new Basket(cartFromSavedFile.toArray(Product[]::new));
     }
 }
